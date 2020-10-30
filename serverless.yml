@@ -1,0 +1,92 @@
+service: gorillapoll
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 256
+  timeout: 5
+  stage: dev
+  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:Query"
+      Resource:
+        - !GetAtt Polls.Arn
+        - !GetAtt Votes.Arn
+
+  environment:
+    VOTES: !Ref Votes
+    POLLS: !Ref Polls
+
+functions:
+  GetPoll:
+    handler: src/lambdas/GetPoll.handler
+    events:
+      - http:
+          path: poll/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+  GetPollResults:
+    handler: src/lambdas/GetPollResults.handler
+    events:
+      - http:
+          path: poll/{id}/results
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+  CreatePoll:
+    handler: src/lambdas/CreatePoll.handler
+    events:
+      - http:
+          path: /poll
+          method: post
+  AddVote:
+    handler: src/lambdas/AddVote.handler
+    events:
+      - http:
+          path: /poll/{id}
+          method: post
+          request:
+            parameters:
+              paths:
+                id: true
+
+resources:
+  Resources:
+    Polls:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Polls
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: _id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: _id
+            KeyType: HASH
+    Votes:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Votes
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: _id
+            AttributeType: S
+          - AttributeName: _ip
+            AttributeType: S
+        KeySchema:
+          - AttributeName: _id
+            KeyType: HASH
+          - AttributeName: _ip
+            KeyType: RANGE
