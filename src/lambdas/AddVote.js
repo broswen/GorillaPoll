@@ -17,6 +17,10 @@ module.exports.handler = async event => {
   if (id === '') {
     return { 
       statusCode: 404,
+      headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: `id is invalid`,
@@ -32,6 +36,10 @@ module.exports.handler = async event => {
   } catch(error) {
     return {
       statusCode: 400,
+      headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: error.message
@@ -44,6 +52,10 @@ module.exports.handler = async event => {
   if ( `${id}=true` in event.multiValueHeaders.Cookie){
     return {
       statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: "this browser has already voted"
@@ -65,6 +77,10 @@ module.exports.handler = async event => {
     } catch (error) {
       return {
         statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        },
         body: JSON.stringify(
           {
             message: error.message
@@ -103,6 +119,10 @@ module.exports.handler = async event => {
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: error.message
@@ -114,7 +134,9 @@ module.exports.handler = async event => {
   return {
     statusCode: 200,
     headers: {
-      "Set-Cookie": `${id}=true`
+      "Set-Cookie": `${id}=true`,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
     },
     body: JSON.stringify(
       {

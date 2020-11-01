@@ -31,6 +31,7 @@ functions:
       - http:
           path: poll/{id}
           method: get
+          cors: true
           request:
             parameters:
               paths:
@@ -41,6 +42,7 @@ functions:
       - http:
           path: poll/{id}/results
           method: get
+          cors: true
           request:
             parameters:
               paths:
@@ -51,12 +53,14 @@ functions:
       - http:
           path: /poll
           method: post
+          cors: true
   AddVote:
     handler: src/lambdas/AddVote.handler
     events:
       - http:
           path: /poll/{id}
           method: post
+          cors: true
           request:
             parameters:
               paths:

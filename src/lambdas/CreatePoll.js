@@ -23,6 +23,10 @@ module.exports.handler = async event => {
   } catch(error) {
     return {
       statusCode: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: error.message
@@ -53,6 +57,10 @@ module.exports.handler = async event => {
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(
         {
           message: error.message
@@ -63,6 +71,10 @@ module.exports.handler = async event => {
 
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
     body: JSON.stringify(
       {
         link: id
