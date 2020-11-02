@@ -129,7 +129,7 @@ module.exports.handler = async event => {
   return {
     statusCode: 200,
     headers: {
-      "Set-Cookie": `${id}=true`,
+      // "Set-Cookie": `${id}=true`,
       'Access-Control-Allow-Origin': '*',
     },
     body: JSON.stringify(
