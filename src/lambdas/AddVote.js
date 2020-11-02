@@ -31,6 +31,7 @@ module.exports.handler = async event => {
   let body;
   try {
     body = JSON.parse(event.body);
+    if (!body) throw new Error('body is malformed');
     if (!('choice' in body)) throw new Error('must specify a choice');
   } catch(error) {
     return {
@@ -46,8 +47,8 @@ module.exports.handler = async event => {
     }; 
   }
 
-  // TODO this doesn't really work for some reason
-  if ( `${id}=true` in event.multiValueHeaders.Cookie){
+  // if ( `${id}=true` in event.multiValueHeaders.Cookie){
+  if (false) {
     return {
       statusCode: 400,
       headers: {
