@@ -29,7 +29,7 @@ functions:
     handler: src/lambdas/GetPoll.handler
     events:
       - http:
-          path: poll/{id}
+          path: /poll/{id}
           method: get
           cors: true
           request:
@@ -40,7 +40,7 @@ functions:
     handler: src/lambdas/GetPollResults.handler
     events:
       - http:
-          path: poll/{id}/results
+          path: /results/{id}
           method: get
           cors: true
           request:

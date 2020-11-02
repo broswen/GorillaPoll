@@ -12,7 +12,6 @@ module.exports.handler = async event => {
       statusCode: 404,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
       },
       body: JSON.stringify(
         {
@@ -38,7 +37,6 @@ module.exports.handler = async event => {
       statusCode: 404,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
       },
       body: JSON.stringify(
         {
@@ -51,11 +49,12 @@ module.exports.handler = async event => {
   let results = {
     id: data.Item['_id'],
     question: data.Item['_question'],
+    choices: []
   };
 
   for (let k of Object.keys(data.Item)) {
-    if (k === '_id' || k === '_question') continue;
-    results[k] = data.Item[k];
+    if (k === '_id' || k === '_question' || k === '_ttl') continue;
+    results.choices.push({value: k, votes: data.Item[k]});
   }
 
   console.log(data);
@@ -64,7 +63,6 @@ module.exports.handler = async event => {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
     },
     body: JSON.stringify( results ),
   };
