@@ -19,23 +19,13 @@ provider:
       Resource:
         - !GetAtt Polls.Arn
         - !GetAtt Votes.Arn
+        - !Join [ '/', [!GetAtt Polls.Arn, 'index/*'] ]
 
   environment:
     VOTES: !Ref Votes
     POLLS: !Ref Polls
 
 functions:
-  GetPoll:
-    handler: src/lambdas/GetPoll.handler
-    events:
-      - http:
-          path: /poll/{id}
-          method: get
-          cors: true
-          request:
-            parameters:
-              paths:
-                id: true
   GetPollResults:
     handler: src/lambdas/GetPollResults.handler
     events:
@@ -47,6 +37,17 @@ functions:
             parameters:
               paths:
                 id: true
+  GetUserPolls:
+    handler: src/lambdas/GetUserPolls.handler
+    events:
+      - http:
+          path: /user/{uid}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                uid: true
   CreatePoll:
     handler: src/lambdas/CreatePoll.handler
     events:
@@ -67,30 +68,4 @@ functions:
                 id: true
 
 resources:
-  Resources:
-    Polls:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: Polls
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: _id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: _id
-            KeyType: HASH
-    Votes:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: Votes
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: _id
-            AttributeType: S
-          - AttributeName: _ip
-            AttributeType: S
-        KeySchema:
-          - AttributeName: _id
-            KeyType: HASH
-          - AttributeName: _ip
-            KeyType: RANGE
+- ${file(./cfn-resources.yml)}

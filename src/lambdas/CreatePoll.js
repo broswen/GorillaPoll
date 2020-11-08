@@ -15,6 +15,7 @@ module.exports.handler = async event => {
   try {
     body = JSON.parse(event.body);
     if (!('question' in body)) throw new Error('must specify question');
+    if (!('uid' in body)) throw new Error('must specify user id');
     if (!('choices' in body)) throw new Error('must specify choices');
     if (body.choices.length < 1 || body.choices.length > 10) throw new Error('invalid amount of choices');
     for (let c of body.choices) {
@@ -39,7 +40,9 @@ module.exports.handler = async event => {
   let params = {
     TableName: process.env.POLLS,
     Item: {
+      "_uid": body.uid,
       "_id": id,
+      "_date": new Date().getTime(),
       "_question": body.question,
       "_ttl": (new Date().getTime()/1000) + (60 * 60 * 24) // open for 24 hours
     }

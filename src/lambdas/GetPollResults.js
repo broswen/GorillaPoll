@@ -53,11 +53,9 @@ module.exports.handler = async event => {
   };
 
   for (let k of Object.keys(data.Item)) {
-    if (k === '_id' || k === '_question' || k === '_ttl') continue;
-    results.choices.push({value: k, votes: data.Item[k]});
+    if (k.startsWith('_')) continue;
+    results.choices.push({name: k, value: data.Item[k]});
   }
-
-  console.log(data);
 
   return {
     statusCode: 200,

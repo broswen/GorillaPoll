@@ -1,0 +1,43 @@
+Resources:
+    Polls:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Polls
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: _id
+            AttributeType: S
+          - AttributeName: _uid
+            AttributeType: S
+          - AttributeName: _date
+            AttributeType: N
+        KeySchema:
+          - AttributeName: _id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: _uid
+                KeyType: HASH
+              - AttributeName: _date
+                KeyType: RANGE 
+            Projection:
+                ProjectionType: ALL
+
+    Votes:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Votes
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: _id
+            AttributeType: S
+          - AttributeName: _ip
+            AttributeType: S
+        KeySchema:
+          - AttributeName: _id
+            KeyType: HASH
+          - AttributeName: _ip
+            KeyType: RANGE
+
+        

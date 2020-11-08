@@ -5,9 +5,9 @@ const DYNAMO = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async event => {
 
-  let id = event.pathParameters.id;
-  
-  if (id === '') {
+  let uid = event.pathParameters.uid;
+
+  if (uid === '') {
     return { 
       statusCode: 404,
       headers: {
@@ -15,7 +15,7 @@ module.exports.handler = async event => {
       },
       body: JSON.stringify(
         {
-          message: `id is invalid`,
+          message: `uid is invalid`,
         }
       ),
     };
@@ -23,16 +23,22 @@ module.exports.handler = async event => {
 
   const params = {
     TableName: process.env.POLLS,
-    Key: {
-      "_id": id
-    }
+    IndexName: "UserIdIndex",
+    KeyConditionExpression: "#uid = :uid",
+    ExpressionAttributeNames: {
+      "#uid": "_uid"
+    },
+    ExpressionAttributeValues: {
+      ":uid": uid
+    },
   }
 
   let data;
   try {
-    data = await DYNAMO.get(params).promise();
-    if(Object.keys(data).length === 0) throw new Error();
+    data = await DYNAMO.query(params).promise();
+    // if(Object.keys(data).length === 0) throw new Error();
   } catch (error) {
+    console.log(error);
     return { 
       statusCode: 404,
       headers: {
@@ -47,17 +53,25 @@ module.exports.handler = async event => {
   }
 
   console.log(data);
+  let results = [];
+
+  for (const k of data.Items) {
+    let item = {};
+    item.question = k['_question'];
+    item.choices = [];
+    for (const k2 of Object.keys(k)) {
+      if (k2.startsWith('_')) continue;
+      item.choices.push({name: k2, value: k[k2]})
+    }
+
+    results.push(item);
+  }
 
   return {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
-    body: JSON.stringify(
-      {
-        question: data.Item['_question'],
-        choices: Object.keys(data.Item).filter(k => k !== '_id' && k !== '_question'),
-      }
-    ),
+    body: JSON.stringify( results ),
   };
 };
