@@ -40,4 +40,20 @@ Resources:
           - AttributeName: _ip
             KeyType: RANGE
 
-        
+    Users:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: GorillaPollUsers
+
+    UsersDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        Domain: gorillapoll
+        UserPoolId: !Ref Users
+      
+    UserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: GorillaPollClient
+        GenerateSecret: true
+        UserPoolId: !Ref Users
