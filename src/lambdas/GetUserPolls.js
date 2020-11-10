@@ -59,6 +59,7 @@ module.exports.handler = async event => {
     let item = {};
     item.question = k['_question'];
     item.id = k['_id'];
+    item.date = k['_date'];
     item.choices = [];
     for (const k2 of Object.keys(k)) {
       if (k2.startsWith('_')) continue;
